@@ -1,7 +1,7 @@
 import java.io.*;
 
 public class analyzeAnthology {
-    public ACLPaperInfo[] MyACLPaperInfo = new ACLPaperInfo[53745];
+    public ACLPaperInfo[] MyACLPaperInfo = new ACLPaperInfo[62486];
 
     analyzeAnthology(String path) {
         //count the byte number of the file

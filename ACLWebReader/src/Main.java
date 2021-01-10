@@ -1,32 +1,38 @@
 import java.io.IOException;
 
 public class Main {
-    static public String doadLoadPath = "/Users/zjy/Desktop/Java应用技术基础/homework4/ACLWebReader/output";
-
     public static void main(String[] args) throws IOException {
+        for (String arg : args) {
+            System.out.println(arg);
+        }
+        String doadLoadPath = args[0];// "/home/zhangli/mydisk-2t/scholarly-bigdata/acl/acl-anthonogy-crawl-pdf-2021-01-10";
+        String metadataPath = args[1];//"/home/zhangli/mydisk-2t/scholarly-bigdata/acl/acl-anthonogy-crawl-pdf-2021-01-10/metadata.txt";
+        String aclBibFile = args[2]; // "/home/zhangli/mydisk-2t/repo/ACLWebReader/ACLWebReader/src/anthology.bib";
+
         //obtain the basic information
-        analyzeAnthology a = new analyzeAnthology("src/anthology.bib");
+        analyzeAnthology a = new analyzeAnthology(aclBibFile);
         //download 500 papers
-        for (int i = 33501; i <= 34000; i++) {
+        for (int i = 0; i <= a.MyACLPaperInfo.length; i++) {
             System.out.println(i);
             if (a.MyACLPaperInfo[i].url == null)
                 continue;
             ACLwebReader.downloadPapers(a.MyACLPaperInfo[i].url, a.MyACLPaperInfo[i].name + ".pdf", doadLoadPath);
+            ACLwebReader.getInformation("https://www.aclweb.org/anthology/P19-1001", metadataPath);
         }
-        for (int i = 13333; i < a.MyACLPaperInfo.length; i++) {
-            System.out.println(i);
-            if (a.MyACLPaperInfo[i].url == null)
-                continue;
-            ACLwebReader.getAbstract(a.MyACLPaperInfo[i].url, "abstract", a.MyACLPaperInfo[i].name);
-        }
-        ACLwebReader.getInformation("https://www.aclweb.org/anthology/P19-1001", "P19-1001.txt", "info");
-        //collect abstract
-        for (int i = 0; i < a.MyACLPaperInfo.length; i++) {
-            if (a.MyACLPaperInfo[i].article == 1) {
-                if (a.MyACLPaperInfo[i].url == null)
-                    continue;
-                ACLwebReader.getAbstract(a.MyACLPaperInfo[i].url, a.MyACLPaperInfo[i].name, "abstract1");
-            }
-        }
+//        for (int i = 13333; i < a.MyACLPaperInfo.length; i++) {
+//            System.out.println(i);
+//            if (a.MyACLPaperInfo[i].url == null)
+//                continue;
+//            ACLwebReader.getAbstract(a.MyACLPaperInfo[i].url, "abstract", a.MyACLPaperInfo[i].name);
+//        }
+//        ACLwebReader.getInformation("https://www.aclweb.org/anthology/P19-1001", metadataPath);
+//        //collect abstract
+//        for (int i = 0; i < a.MyACLPaperInfo.length; i++) {
+//            if (a.MyACLPaperInfo[i].article == 1) {
+//                if (a.MyACLPaperInfo[i].url == null)
+//                    continue;
+//                ACLwebReader.getAbstract(a.MyACLPaperInfo[i].url, a.MyACLPaperInfo[i].name, "abstract1");
+//            }
+//        }
     }
 }

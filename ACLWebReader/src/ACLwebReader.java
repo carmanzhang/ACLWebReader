@@ -1,11 +1,11 @@
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class ACLwebReader {
     //download PDF
@@ -80,7 +80,7 @@ public class ACLwebReader {
     }
 
     //get the information from web
-    public static void getInformation(String url, String fileName, String filePath) throws IOException {
+    public static void getInformation(String url, String fileName) throws IOException {
         //do not judge whether url is null or not
         Document doc = Jsoup.connect(url)
                 .userAgent("Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)")
@@ -89,38 +89,32 @@ public class ACLwebReader {
         String title = doc.getElementById("title").text() + "\n";
         String abstracts = doc.getElementsByClass("card-body acl-abstract").text() + "\n";
         String contents = doc.select("dl").text() + "\n";
-        File path = new File(filePath);
-        if (!path.exists()) {
-            path.mkdir();
-        }
-        File file = new File(path, fileName);
+        File file = new File(fileName);
         FileOutputStream out = new FileOutputStream(file, true);
-        if (title != null)
-            out.write(title.getBytes());
-        if (authors != null)
-            out.write(authors.getBytes());
+        out.write("---\n".getBytes());
+        out.write(title.getBytes());
+        out.write(authors.getBytes());
         if (!abstracts.equals("\n"))
             out.write(abstracts.getBytes());
-        if (contents != null)
-            out.write(contents.getBytes());
+        out.write(contents.getBytes());
         out.close();
-        //print the basic information
-        if (title != null) {
-            System.out.println("Title:");
-            System.out.println(title);
-        }
-        if (authors != null) {
-            System.out.println("Authors:");
-            System.out.println(authors);
-        }
-        if (!abstracts.equals("\n")) {
-            System.out.println("Abstract:");
-            System.out.println(abstracts);
-        }
-        if (contents != null) {
-            System.out.println("Content:");
-            System.out.println(contents);
-        }
+//        //print the basic information
+//        if (title != null) {
+//            System.out.println("Title:");
+//            System.out.println(title);
+//        }
+//        if (authors != null) {
+//            System.out.println("Authors:");
+//            System.out.println(authors);
+//        }
+//        if (!abstracts.equals("\n")) {
+//            System.out.println("Abstract:");
+//            System.out.println(abstracts);
+//        }
+//        if (contents != null) {
+//            System.out.println("Content:");
+//            System.out.println(contents);
+//        }
     }
 }
 

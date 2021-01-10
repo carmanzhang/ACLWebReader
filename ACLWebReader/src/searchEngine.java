@@ -159,7 +159,7 @@ public class searchEngine {
             for (String d : results) {
                 String url = searchEngine.titile2url.get(d);
                 if (url != null)
-                    ACLwebReader.getInformation(url, d, "search");
+                    ACLwebReader.getInformation(url, d);
             }
         }
     }
