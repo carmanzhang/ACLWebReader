@@ -10,6 +10,17 @@ import java.net.URL;
 public class ACLwebReader {
     //download PDF
     public static void downLoadByUrl(String urlStr, String fileName, String savePath) throws IOException {
+        //save the document
+        File saveDir = new File(savePath);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
+        File file = new File(saveDir + File.separator + fileName);
+        if (file.exists()) {
+            System.out.println(fileName + " exist!, skip!");
+            return;
+        }
+
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //avoid 403
@@ -17,12 +28,7 @@ public class ACLwebReader {
         //get input
         InputStream inputStream = conn.getInputStream();
         byte[] getData = readInputStream(inputStream);
-        //save the document
-        File saveDir = new File(savePath);
-        if (!saveDir.exists()) {
-            saveDir.mkdir();
-        }
-        File file = new File(saveDir + File.separator + fileName);
+
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(getData);
         if (fos != null) {
@@ -53,7 +59,12 @@ public class ACLwebReader {
         Elements hrefs = doc.select("a[href]");
         for (Element elem : hrefs) {
             if (elem.text().endsWith(".pdf")) {
-                downLoadByUrl(elem.text(), fineName, savePath);
+                try {
+                    downLoadByUrl(elem.text(), fineName, savePath);
+                } catch (Exception e) {
+                    System.out.println(elem.text() + "\t" + fineName + "\t" + savePath);
+                    e.printStackTrace();
+                }
             }
         }
     }
