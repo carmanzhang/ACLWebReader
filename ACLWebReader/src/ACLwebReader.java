@@ -5,6 +5,8 @@ import org.jsoup.select.Elements;
 
 import java.io.*;
 import java.net.HttpURLConnection;
+import java.net.InetSocketAddress;
+import java.net.Proxy;
 import java.net.URL;
 
 public class ACLwebReader {
@@ -20,7 +22,9 @@ public class ACLwebReader {
             System.out.println(fileName + " exist!, skip!");
             return;
         }
-
+        if (!urlStr.startsWith("http")) {
+            urlStr = "https://www.aclweb.org/anthology/" + urlStr;
+        }
         URL url = new URL(urlStr);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         //avoid 403
@@ -53,8 +57,20 @@ public class ACLwebReader {
 
     //collect paper download address
     public static void downloadPapers(String url, String fineName, String savePath) throws IOException {
+        if (!url.startsWith("http")) {
+            url = "https://www.aclweb.org/anthology/" + url;
+        }
+
+        if (!url.toLowerCase().contains("aclweb")) {
+            downLoadByUrl(url, fineName, savePath);
+            return;
+        }
+
         Document doc = Jsoup.connect(url)
-                .userAgent("Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)")
+                .userAgent("Mozilla/4.0 (compatible; MSIE 9.0; Windows NT 6.1; Trident/5.0)").proxy(
+//                        new Proxy(Proxy.Type.SOCKS, new InetSocketAddress("127.0.0.1", 1088)))
+                        new Proxy(Proxy.Type.HTTP, new InetSocketAddress("127.0.0.1", 8888))
+                )
                 .get();
         Elements hrefs = doc.select("a[href]");
         for (Element elem : hrefs) {
@@ -64,6 +80,11 @@ public class ACLwebReader {
                 } catch (Exception e) {
                     System.out.println(elem.text() + "\t" + fineName + "\t" + savePath);
                     e.printStackTrace();
+                    try {
+                        downLoadByUrl(fineName, fineName, savePath);
+                    } catch (Exception e1) {
+                        e1.printStackTrace();
+                    }
                 }
             }
         }
